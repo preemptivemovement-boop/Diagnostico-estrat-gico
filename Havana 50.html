@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnóstico Estratégico • Preemptive Movement</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root { 
+            --bg: #0b0f1a; 
+            --card: #1a2332; 
+            --primary: #FF2448; 
+            --accent: #00C1FF; 
+            --success: #10b981;
+            --warning: #f59e0b;
+            --whatsapp: #25D366; 
+            --text-dim: #94a3b8; 
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body { 
+            margin: 0; 
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; 
+            background: var(--bg); 
+            color: white; 
+            line-height: 1.6; 
+        }
+        
+        .container { 
+            width: 95%; 
+            max-width: 600px; 
+            margin: auto; 
+            padding: 20px; 
+            min-height: 100vh; 
+        }
+        
+        .card { 
+            background: var(--card); 
+            border-radius: 20px; 
+            padding: 32px; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5); 
+            border: 1px solid rgba(255,255,255,0.08); 
+            margin-bottom: 20px; 
+        }
+        
+        .logo {
+            text-align: center;
+            font-size: 4rem;
+            margin-bottom: 16px;
+            filter: drop-shadow(0 4px 12px rgba(0,193,255,0.3));
+        }
+        
+        h1 { 
+            font-size: 2rem; 
+            font-weight: 900; 
+            text-align: center; 
+            margin-bottom: 12px; 
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #FF2448, #00C1FF);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: var(--text-dim);
+            font-size: 1.05rem;
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+        
+        .btn { 
+            width: 100%; 
+            padding: 18px; 
+            border-radius: 14px; 
+            border: none; 
+            font-weight: 700; 
+            cursor: pointer; 
+            transition: all 0.3s; 
+            font-size: 1.05rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .btn-primary { 
+            background: linear-gradient(135deg, var(--primary), #e01a3c);
+            color: white; 
+            box-shadow: 0 8px 20px rgba(255, 36, 72, 0.4); 
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(255, 36, 72, 0.5);
+        }
+        
+        .btn-whatsapp { 
+            background: var(--whatsapp); 
+            color: white; 
+            margin-top: 16px;
+        }
+        
+        .btn-whatsapp:hover {
+            background: #20bd5a;
+            transform: translateY(-2px);
+        }
+        
+        .btn-outline { 
+            background: rgba(255,255,255,0.06); 
+            color: white;
+            border: 1px solid rgba(255,255,255,0.1);
+            margin-top: 12px;
+        }
+        
+        .btn-outline:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        
+        .hidden { 
+            display: none; 
+        }
+        
+        /* Progress bar */
+        .progress-container {
+            margin-bottom: 24px;
+        }
+        
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: var(--text-dim);
+        }
+        
+        .progress-bar {
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--primary));
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+        
+        .question-section {
+            margin: 24px 0;
+        }
+        
+        .question-label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+        
+        .question-text {
+            font-size: 1.3rem;
+            font-weight: 600;
+            line-height: 1.5;
+            margin-bottom: 24px;
+            min-height: 60px;
+        }
+        
+        .val-display { 
+            font-size: 5rem; 
+            font-weight: 900; 
+            color: var(--accent); 
+            text-align: center; 
+            margin: 20px 0;
+            font-variant-numeric: tabular-nums;
+            text-shadow: 0 4px 20px rgba(0,193,255,0.3);
+        }
+        
+        .slider-container {
+            margin: 32px 0;
+        }
+        
+        .slider-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            margin-top: 8px;
+        }
+        
+        input[type=range] { 
+            -webkit-appearance: none; 
+            width: 100%; 
+            background: transparent; 
+            margin: 20px 0;
+            cursor: pointer;
+        }
+        
+        input[type=range]::-webkit-slider-runnable-track { 
+            height: 10px; 
+            background: linear-gradient(90deg, var(--primary) 0%, var(--warning) 50%, var(--success) 100%);
+            border-radius: 5px; 
+        }
+        
+        input[type=range]::-webkit-slider-thumb { 
+            height: 32px; 
+            width: 32px; 
+            border-radius: 50%; 
+            background: white;
+            -webkit-appearance: none; 
+            margin-top: -11px; 
+            cursor: pointer; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4); 
+            border: 3px solid var(--accent);
+        }
+        
+        /* Results */
+        .result-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        
+        .result-score {
+            display: inline-block;
+            padding: 8px 20px;
+            background: rgba(0,193,255,0.15);
+            color: var(--accent);
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+        
+        .result-title {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+        }
+        
+        .alert-box { 
+            background: rgba(255,36,72,0.08); 
+            border-left: 4px solid var(--primary); 
+            padding: 20px; 
+            border-radius: 12px; 
+            margin: 20px 0; 
+        }
+        
+        .alert-title {
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .alert-content {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #e5e7eb;
+        }
+        
+        .action-box { 
+            background: rgba(0,193,255,0.08); 
+            border-left: 4px solid var(--accent); 
+            padding: 20px; 
+            border-radius: 12px; 
+            margin: 20px 0;
+        }
+        
+        .action-title {
+            color: var(--accent);
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .action-content {
+            font-size: 1rem;
+            line-height: 1.6;
+            font-weight: 600;
+            color: white;
+        }
+        
+        @media (max-width: 480px) {
+            h1 { font-size: 1.6rem; }
+            .val-display { font-size: 4rem; }
+            .question-text { font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- HOME SCREEN -->
+    <div id="screen-home" class="card">
+        <div class="logo">🎯</div>
+        <h1>Diagnóstico Estratégico</h1>
+        <p class="subtitle">
+            Análisis profesional de tu situación actual en 4 áreas clave: 
+            Energía, Organización, Claridad Mental y Trabajo en Equipo.
+        </p>
+        <button class="btn btn-primary" onclick="startTest()">Comenzar Análisis</button>
+        <p style="text-align:center; color: var(--text-dim); font-size: 0.85rem; margin-top: 16px;">
+            ⏱️ Tiempo estimado: 2-3 minutos
+        </p>
+    </div>
+
+    <!-- TEST SCREEN -->
+    <div id="screen-test" class="hidden">
+        <div class="card">
+            <div class="progress-container">
+                <div class="progress-text">
+                    <span id="progress-label">Pregunta 1 de 8</span>
+                    <span id="progress-percent">12%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill" style="width: 12.5%"></div>
+                </div>
+            </div>
+            
+            <div class="question-section">
+                <div class="question-label" id="question-category">CATEGORÍA</div>
+                <h3 class="question-text" id="question-text">-</h3>
+            </div>
+            
+            <div class="val-display" id="display-value">5</div>
+            
+            <div class="slider-container">
+                <input type="range" id="slider" min="1" max="10" step="1" value="5" oninput="updateUI()">
+                <div class="slider-labels">
+                    <span>Muy Bajo</span>
+                    <span>Medio</span>
+                    <span>Muy Alto</span>
+                </div>
+            </div>
+            
+            <button class="btn btn-primary" onclick="nextQ()">Siguiente ▶</button>
+        </div>
+    </div>
+
+    <!-- RESULTS SCREEN -->
+    <div id="screen-results" class="hidden">
+        <div class="card">
+            <div class="result-header">
+                <div class="result-score" id="result-score">ANÁLISIS COMPLETADO</div>
+                <h1 class="result-title">Tu Diagnóstico</h1>
+            </div>
+            
+            <canvas id="resultChart" style="max-height: 280px; margin: 24px 0;"></canvas>
+            
+            <div class="alert-box">
+                <div class="alert-title">⚠️ Área de Atención</div>
+                <div class="alert-content" id="alert-content">-</div>
+            </div>
+            
+            <div class="action-box">
+                <div class="action-title">✅ Recomendación Inmediata</div>
+                <div class="action-content" id="action-content">-</div>
+            </div>
+            
+            <button class="btn btn-whatsapp" onclick="sendWA()">
+                📱 Solicitar Análisis Profesional
+            </button>
+            <button class="btn btn-outline" onclick="location.reload()">
+                🔄 Realizar Nuevo Diagnóstico
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+// PREGUNTAS DEL DIAGNÓSTICO (más claras y directas)
+const questions = [
+    { cat: "ENERGÍA FÍSICA", q: "¿Cómo está tu nivel de energía y vitalidad física hoy?" },
+    { cat: "ORGANIZACIÓN", q: "¿Qué tan ordenado está tu espacio de trabajo y tus tareas?" },
+    { cat: "CLARIDAD MENTAL", q: "¿Cómo de clara tienes tu mente para tomar decisiones?" },
+    { cat: "TRABAJO EN EQUIPO", q: "¿Cómo funciona la comunicación con tu equipo o entorno?" },
+    { cat: "ENERGÍA FÍSICA", q: "¿Te sientes con fuerza para enfrentar el resto del día?" },
+    { cat: "ORGANIZACIÓN", q: "¿Tienes un plan claro de tus prioridades actuales?" },
+    { cat: "CLARIDAD MENTAL", q: "¿Puedes concentrarte sin distracciones constantes?" },
+    { cat: "TRABAJO EN EQUIPO", q: "¿Existe confianza y fluidez en tus relaciones laborales?" }
+];
+
+// DIAGNÓSTICOS SIMPLIFICADOS (lenguaje claro)
+const diagnostics = {
+    "energia_baja": {
+        alerta: "Tu energía física está por debajo del nivel óptimo. Esto puede afectar tu capacidad de mantener el ritmo y tomar decisiones claras.",
+        accion: "Prioriza descanso de calidad, ejercicio ligero diario y revisa tu alimentación. Considera suplementación básica (B6, magnesio) tras consulta médica."
+    },
+    "energia_alta": {
+        alerta: "Tu energía está en buen nivel. Mantienes la capacidad de ejecutar y responder bien ante desafíos.",
+        accion: "Aprovecha este momento para avanzar en proyectos importantes. No sobrecargues tu agenda, mantén el equilibrio."
+    },
+    "organizacion_baja": {
+        alerta: "El desorden en tu entorno y tareas está generando ruido mental y pérdida de tiempo valioso.",
+        accion: "Dedica 1 hora hoy a eliminar lo innecesario. Crea una lista de máximo 3 prioridades para esta semana."
+    },
+    "organizacion_alta": {
+        alerta: "Tu nivel de organización es bueno. Tienes claridad sobre tus prioridades actuales.",
+        accion: "Mantén tu sistema actual. Revisa semanalmente que sigue funcionando para ti."
+    },
+    "claridad_baja": {
+        alerta: "Tu mente está sobrecargada o dispersa. Esto dificulta tomar decisiones acertadas.",
+        accion: "Reduce fuentes de información innecesarias hoy. Practica 10 minutos de silencio o caminata sin móvil."
+    },
+    "claridad_alta": {
+        alerta: "Tu claridad mental es fuerte. Puedes analizar situaciones con perspectiva.",
+        accion: "Es buen momento para decisiones importantes. Aprovecha tu lucidez actual."
+    },
+    "equipo_bajo": {
+        alerta: "La comunicación con tu entorno no fluye bien. Hay fricción o malentendidos.",
+        accion: "Inicia conversaciones directas y honestas. Si hay conflicto, abórdalo pronto antes de que crezca."
+    },
+    "equipo_alto": {
+        alerta: "Tu entorno de trabajo es colaborativo y fluido. Las relaciones están alineadas.",
+        accion: "Cuida estas relaciones. Reconoce el valor del equipo y mantén la confianza mutua."
+    },
+    "equilibrado": {
+        alerta: "Tu situación general es estable. No hay crisis inmediata pero siempre hay margen de mejora.",
+        accion: "Mantén vigilancia preventiva. Revisa periódicamente estas 4 áreas para detectar cambios a tiempo."
+    },
+    "crisis": {
+        alerta: "Múltiples áreas requieren atención urgente. La acumulación puede llevar a colapso si no actúas.",
+        accion: "Prioriza UNA sola área esta semana. No intentes arreglar todo a la vez. Busca apoyo profesional si lo necesitas."
+    }
+};
+
+let currentIdx = 0;
+let answers = [];
+
+function startTest() {
+    answers = [];
+    currentIdx = 0;
+    showScreen('screen-test');
+    loadQuestion();
+}
+
+function showScreen(id) {
+    document.querySelectorAll('[id^="screen-"]').forEach(s => s.classList.add('hidden'));
+    document.getElementById(id).classList.remove('hidden');
+    window.scrollTo(0, 0);
+}
+
+function loadQuestion() {
+    const q = questions[currentIdx];
+    const progress = ((currentIdx + 1) / questions.length) * 100;
+    
+    document.getElementById('progress-label').innerText = `Pregunta ${currentIdx + 1} de ${questions.length}`;
+    document.getElementById('progress-percent').innerText = `${Math.round(progress)}%`;
+    document.getElementById('progress-fill').style.width = `${progress}%`;
+    document.getElementById('question-category').innerText = q.cat;
+    document.getElementById('question-text').innerText = q.q;
+    document.getElementById('display-value').innerText = "5";
+    document.getElementById('slider').value = "5";
+}
+
+function updateUI() {
+    document.getElementById('display-value').innerText = document.getElementById('slider').value;
+}
+
+function nextQ() {
+    const val = parseInt(document.getElementById('slider').value);
+    answers.push(val);
+    
+    if (currentIdx < questions.length - 1) {
+        currentIdx++;
+        loadQuestion();
+    } else {
+        showResults();
+    }
+}
+
+function showResults() {
+    showScreen('screen-results');
+    
+    // Calcular promedios por categoría
+    const energia = (answers[0] + answers[4]) / 2;
+    const organizacion = (answers[1] + answers[5]) / 2;
+    const claridad = (answers[2] + answers[6]) / 2;
+    const equipo = (answers[3] + answers[7]) / 2;
+    
+    const promedio = (energia + organizacion + claridad + equipo) / 4;
+    
+    // Determinar diagnóstico
+    let diagnostic;
+    const lowAreas = [];
+    
+    if (energia < 5) lowAreas.push("energia_baja");
+    else if (energia >= 7) lowAreas.push("energia_alta");
+    
+    if (organizacion < 5) lowAreas.push("organizacion_baja");
+    else if (organizacion >= 7) lowAreas.push("organizacion_alta");
+    
+    if (claridad < 5) lowAreas.push("claridad_baja");
+    else if (claridad >= 7) lowAreas.push("claridad_alta");
+    
+    if (equipo < 5) lowAreas.push("equipo_bajo");
+    else if (equipo >= 7) lowAreas.push("equipo_alto");
+    
+    // Seleccionar diagnóstico principal
+    if (lowAreas.length === 0) {
+        diagnostic = diagnostics.equilibrado;
+    } else if (lowAreas.filter(a => a.includes("baja") || a.includes("bajo")).length >= 3) {
+        diagnostic = diagnostics.crisis;
+    } else {
+        // Priorizar el área más baja
+        const lowestArea = lowAreas.find(a => a.includes("baja") || a.includes("bajo")) || lowAreas[0];
+        diagnostic = diagnostics[lowestArea];
+    }
+    
+    // Mostrar resultados
+    document.getElementById('alert-content').innerText = diagnostic.alerta;
+    document.getElementById('action-content').innerText = diagnostic.accion;
+    
+    // Gráfico
+    renderChart(energia, organizacion, claridad, equipo);
+}
+
+function renderChart(energia, organizacion, claridad, equipo) {
+    const ctx = document.getElementById('resultChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'radar',
+        data: {
+            labels: ['Energía Física', 'Organización', 'Claridad Mental', 'Trabajo en Equipo'],
+            datasets: [{
+                label: 'Tu Nivel',
+                data: [energia, organizacion, claridad, equipo],
+                backgroundColor: 'rgba(0,193,255,0.2)',
+                borderColor: '#00C1FF',
+                borderWidth: 3,
+                pointBackgroundColor: '#FF2448',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                pointRadius: 6
+            }]
+        },
+        options: {
+            scales: {
+                r: {
+                    min: 0,
+                    max: 10,
+                    ticks: {
+                        stepSize: 2,
+                        color: '#94a3b8',
+                        backdropColor: 'transparent'
+                    },
+                    grid: {
+                        color: 'rgba(255,255,255,0.1)'
+                    },
+                    angleLines: {
+                        color: 'rgba(255,255,255,0.1)'
+                    },
+                    pointLabels: {
+                        color: '#e5e7eb',
+                        font: {
+                            size: 12,
+                            weight: '600'
+                        }
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+}
+
+function sendWA() {
+    const msg = `Hola, he completado el Diagnóstico Estratégico de Preemptive Movement y me gustaría solicitar un análisis profesional más profundo de mi situación.`;
+    window.open(`https://wa.me/34672680535?text=${encodeURIComponent(msg)}`);
+}
+</script>
+</body>
+</html>
