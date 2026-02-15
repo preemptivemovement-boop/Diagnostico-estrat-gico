@@ -1,0 +1,1 @@
+# Diagnostico-estrat-gico
